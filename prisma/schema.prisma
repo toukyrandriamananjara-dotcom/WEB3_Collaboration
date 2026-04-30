@@ -1,13 +1,70 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  sessions    Session[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Room {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  sessions Session[]
+}
+
+model Session {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  capacity    Int?
+  eventId     String
+  roomId      String
+  event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  room        Room       @relation(fields: [roomId], references: [id])
+  speakers    Speaker[]  @relation("SessionSpeakers")
+  questions   Question[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Speaker {
+  id            String    @id @default(cuid())
+  fullName      String
+  photo         String?
+  bio           String?
+  externalLinks Json? // { twitter, linkedin, github, website }
+  sessions      Session[] @relation("SessionSpeakers")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Question {
+  id         String   @id @default(cuid())
+  content    String
+  authorName String?
+  upvotes    Int      @default(0)
+  sessionId  String
+  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }
