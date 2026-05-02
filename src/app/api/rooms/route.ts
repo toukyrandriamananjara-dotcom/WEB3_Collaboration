@@ -12,8 +12,8 @@ export async function GET() {
 
 // POST /api/rooms — admin
 export async function POST(req: NextRequest) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const body = await req.json();
     const { name } = body;

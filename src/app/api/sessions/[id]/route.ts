@@ -21,8 +21,8 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 // PUT /api/sessions/:id — admin
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const { id } = await params;
     const body = await req.json();
@@ -49,8 +49,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // DELETE /api/sessions/:id — admin
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const { id } = await params;
     await prisma.session.delete({ where: { id } });

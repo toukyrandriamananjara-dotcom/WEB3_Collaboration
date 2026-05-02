@@ -15,8 +15,8 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 // POST /api/events/:id/sessions — admin
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const { id } = await params;
     const body = await req.json();

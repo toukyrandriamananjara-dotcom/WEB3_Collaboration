@@ -18,8 +18,8 @@ export async function GET() {
 
 // POST /api/events — admin
 export async function POST(req: NextRequest) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const body = await req.json();
     const { title, description, startDate, endDate, location } = body;

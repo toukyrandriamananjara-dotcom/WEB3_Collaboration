@@ -23,8 +23,8 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 // PUT /api/events/:id — admin
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const { id } = await params;
     const body = await req.json();
@@ -46,8 +46,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 // DELETE /api/events/:id — admin
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-    //const unauthorized = await requireAdmin();
-    //if (unauthorized) return unauthorized;
+    const unauthorized = await requireAdmin();
+    if (unauthorized) return unauthorized;
 
     const { id } = await params;
     console.log(">>> DELETE id reçu:", id);
