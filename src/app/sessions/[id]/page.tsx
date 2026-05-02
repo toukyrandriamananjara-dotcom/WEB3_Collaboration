@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, use } from "react";
 import Link from "next/link";
 import { Session, Question } from "@/types";
 
@@ -19,8 +19,10 @@ function formatTime(dateStr: string) {
 export default function SessionPage({
                                         params,
                                     }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
+    const { id } = use(params);
+
     const [session, setSession] = useState<Session | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [loading, setLoading] = useState(true);
@@ -33,16 +35,16 @@ export default function SessionPage({
 
     const fetchQuestions = useCallback(async () => {
         try {
-            const res = await fetch(`/api/sessions/${params.id}/questions`);
+            const res = await fetch(`/api/sessions/${id}/questions`);
             if (!res.ok) return;
             setQuestions(await res.json());
         } catch {}
-    }, [params.id]);
+    }, [id]);
 
     useEffect(() => {
         async function fetchSession() {
             try {
-                const res = await fetch(`/api/sessions/${params.id}`);
+                const res = await fetch(`/api/sessions/${id}`);
                 if (!res.ok) return;
                 const data: Session = await res.json();
                 setSession(data);
@@ -54,7 +56,7 @@ export default function SessionPage({
         fetchSession();
         const interval = setInterval(fetchQuestions, 5000);
         return () => clearInterval(interval);
-    }, [params.id, fetchQuestions]);
+    }, [id, fetchQuestions]);
 
     async function submitQuestion(e: React.FormEvent) {
         e.preventDefault();
@@ -62,7 +64,7 @@ export default function SessionPage({
         setSubmitting(true);
         setError("");
         try {
-            const res = await fetch(`/api/sessions/${params.id}/questions`, {
+            const res = await fetch(`/api/sessions/${id}/questions`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -125,7 +127,6 @@ export default function SessionPage({
 
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
-            {/* Back */}
             <Link
                 href={`/events/${session.event?.id}`}
                 className="inline-flex items-center gap-2 text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-10"
@@ -134,23 +135,21 @@ export default function SessionPage({
             </Link>
 
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-12 items-start">
-                {/* Left — Session info */}
                 <div className="fade-up">
-                    {/* Status badge */}
                     <div className="mb-5">
                         {live ? (
                             <span className="badge-live">
-                <span className="live-dot" />
-                En cours
-              </span>
+                                <span className="live-dot" />
+                                En cours
+                            </span>
                         ) : upcoming ? (
                             <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-500 border border-zinc-800 px-2.5 py-1 rounded-sm">
-                À venir
-              </span>
+                                À venir
+                            </span>
                         ) : (
                             <span className="text-[10px] font-mono tracking-widest uppercase text-zinc-600 border border-zinc-800 px-2.5 py-1 rounded-sm">
-                Terminée
-              </span>
+                                Terminée
+                            </span>
                         )}
                     </div>
 
@@ -158,11 +157,10 @@ export default function SessionPage({
                         {session.title}
                     </h1>
 
-                    {/* Meta */}
                     <div className="flex flex-wrap gap-4 mb-8">
-            <span className="text-xs font-mono text-zinc-400">
-              {formatTime(session.startTime)} – {formatTime(session.endTime)}
-            </span>
+                        <span className="text-xs font-mono text-zinc-400">
+                            {formatTime(session.startTime)} – {formatTime(session.endTime)}
+                        </span>
                         <span className="text-xs font-mono text-zinc-600">|</span>
                         <span className="text-xs font-mono text-zinc-400">{session.room.name}</span>
                         {session.capacity && (
@@ -179,7 +177,6 @@ export default function SessionPage({
                         </p>
                     )}
 
-                    {/* Speakers */}
                     {session.speakers.length > 0 && (
                         <div>
                             <span className="label">Intervenants</span>
@@ -187,14 +184,9 @@ export default function SessionPage({
                                 {session.speakers.map((speaker) => (
                                     <Link key={speaker.id} href={`/speakers/${speaker.id}`}>
                                         <div className="flex items-center gap-4 p-3.5 border border-zinc-800 rounded-xl hover:border-zinc-600 transition-all group">
-                                            {/* Avatar */}
                                             <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-sm font-bold text-zinc-400 shrink-0 overflow-hidden">
                                                 {speaker.photo ? (
-                                                    <img
-                                                        src={speaker.photo}
-                                                        alt={speaker.fullName}
-                                                        className="w-full h-full object-cover"
-                                                    />
+                                                    <img src={speaker.photo} alt={speaker.fullName} className="w-full h-full object-cover" />
                                                 ) : (
                                                     speaker.fullName.charAt(0).toUpperCase()
                                                 )}
@@ -216,34 +208,26 @@ export default function SessionPage({
                     )}
                 </div>
 
-                {/* Right — Q&A Panel */}
-                <div
-                    className={`
-            card overflow-hidden fade-up-1 sticky top-20
-            ${live ? "border-red-500/20" : ""}
-          `}
-                >
-                    {/* Panel header */}
+                <div className={`card overflow-hidden fade-up-1 sticky top-20 ${live ? "border-red-500/20" : ""}`}>
                     <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
                         <p className={`text-xs font-mono tracking-widest uppercase ${live ? "text-red-400" : "text-zinc-500"}`}>
                             Questions / Réponses
                         </p>
                         <span className="text-xs font-mono text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-md">
-              {questions.length}
-            </span>
+                            {questions.length}
+                        </span>
                     </div>
 
-                    {/* Form — only when live */}
                     {live ? (
                         <form onSubmit={submitQuestion} className="p-4 border-b border-zinc-800">
-              <textarea
-                  value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
-                  placeholder="Posez votre question..."
-                  required
-                  rows={3}
-                  className="input resize-none mb-2 text-sm"
-              />
+                            <textarea
+                                value={questionText}
+                                onChange={(e) => setQuestionText(e.target.value)}
+                                placeholder="Posez votre question..."
+                                required
+                                rows={3}
+                                className="input resize-none mb-2 text-sm"
+                            />
                             <div className="flex gap-2">
                                 <input
                                     value={authorName}
@@ -258,18 +242,12 @@ export default function SessionPage({
                                 >
                                     {submitting ? (
                                         <span className="flex items-center gap-1.5">
-                      <div className="w-3 h-3 rounded-full border border-zinc-700 border-t-zinc-300 animate-spin" />
-                    </span>
-                                    ) : submitSuccess ? (
-                                        "✓"
-                                    ) : (
-                                        "Envoyer"
-                                    )}
+                                            <div className="w-3 h-3 rounded-full border border-zinc-700 border-t-zinc-300 animate-spin" />
+                                        </span>
+                                    ) : submitSuccess ? "✓" : "Envoyer"}
                                 </button>
                             </div>
-                            {error && (
-                                <p className="text-xs text-red-400 mt-2 font-mono">{error}</p>
-                            )}
+                            {error && <p className="text-xs text-red-400 mt-2 font-mono">{error}</p>}
                         </form>
                     ) : (
                         <div className="p-4 border-b border-zinc-800">
@@ -281,7 +259,6 @@ export default function SessionPage({
                         </div>
                     )}
 
-                    {/* Questions list */}
                     <div className="max-h-[460px] overflow-y-auto">
                         {questions.length === 0 ? (
                             <div className="p-8 text-center">
@@ -293,23 +270,18 @@ export default function SessionPage({
                             <div className="divide-y divide-zinc-800/60">
                                 {questions.map((q) => (
                                     <div key={q.id} className="flex gap-3 p-4">
-                                        {/* Upvote button */}
                                         <button
                                             onClick={() => upvote(q.id)}
                                             disabled={upvoted.has(q.id)}
-                                            className={`
-                        flex flex-col items-center gap-0.5 px-2.5 py-2 rounded-lg border text-xs font-mono transition-all shrink-0
-                        ${upvoted.has(q.id)
-                                                ? "border-red-500/50 text-red-400 bg-red-500/10 cursor-default"
-                                                : "border-zinc-800 text-zinc-600 hover:border-zinc-600 hover:text-zinc-400 cursor-pointer"
-                                            }
-                      `}
+                                            className={`flex flex-col items-center gap-0.5 px-2.5 py-2 rounded-lg border text-xs font-mono transition-all shrink-0 ${
+                                                upvoted.has(q.id)
+                                                    ? "border-red-500/50 text-red-400 bg-red-500/10 cursor-default"
+                                                    : "border-zinc-800 text-zinc-600 hover:border-zinc-600 hover:text-zinc-400 cursor-pointer"
+                                            }`}
                                         >
                                             <span className="text-[10px]">▲</span>
                                             <span className="font-semibold">{q.upvotes}</span>
                                         </button>
-
-                                        {/* Content */}
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm text-zinc-200 leading-relaxed">{q.content}</p>
                                             <p className="text-xs text-zinc-600 mt-1.5 font-mono">
