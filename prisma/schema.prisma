@@ -13,9 +13,9 @@ model Event {
   startDate   DateTime
   endDate     DateTime
   location    String
-  sessions    Session[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  sessions    Session[]
 }
 
 model Room {
@@ -33,12 +33,12 @@ model Session {
   capacity    Int?
   eventId     String
   roomId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  questions   Question[]
   event       Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   room        Room       @relation(fields: [roomId], references: [id])
   speakers    Speaker[]  @relation("SessionSpeakers")
-  questions   Question[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
 }
 
 model Speaker {
@@ -46,10 +46,10 @@ model Speaker {
   fullName      String
   photo         String?
   bio           String?
-  externalLinks Json? // { twitter, linkedin, github, website }
-  sessions      Session[] @relation("SessionSpeakers")
+  externalLinks Json?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  sessions      Session[] @relation("SessionSpeakers")
 }
 
 model Question {
@@ -58,8 +58,8 @@ model Question {
   authorName String?
   upvotes    Int      @default(0)
   sessionId  String
-  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
+  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model Admin {
