@@ -34,7 +34,7 @@ export default async function HomePage() {
           <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-primary mb-4">
             {liveCount > 0 ? `${liveCount} session${liveCount > 1 ? "s" : ""} en direct aujourd'hui` : "LIVE · Q&A · PLANNING"}
           </p>
-          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-foreground mb-5 leading-none">
+          <h1 className="text-6xl md:text-6xl font-bold tracking-tight text-foreground mb-5 leading-none">
             L&apos;expérience moderne pour vos événements.
           </h1>
           <p className="text-base text-muted-foreground max-w-md leading-relaxed mb-8">

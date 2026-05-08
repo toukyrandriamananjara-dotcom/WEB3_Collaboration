@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, use } from "react";
 import Link from "next/link";
 import { Session, Question } from "@/types";
+import {useFavorites} from "../../../../hooks/useFavorite";
 
 function isLive(session: Session): boolean {
     const now = new Date();
@@ -15,6 +16,8 @@ function formatTime(dateStr: string) {
 
 export default function SessionPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
+    const { isFavorite, toggleFavorite } = useFavorites();
+    const fav = isFavorite(id);
     const [session, setSession] = useState<Session | null>(null);
     const [questions, setQuestions] = useState<Question[]>([]);
     const [loading, setLoading] = useState(true);
@@ -112,6 +115,16 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
                         )}
                     </div>
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground leading-tight mb-6">{session.title}</h1>
+                    <button
+                        onClick={() => toggleFavorite(id)}
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-3 py-1 rounded-full border transition-all ml-4 ${
+                            fav
+                                ? "bg-primary text-white border-primary"
+                                : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+                        }`}
+                    >
+                        {fav ? "★ Retiré des favoris" : "☆ Ajouter aux favoris"}
+                    </button>
                     <div className="flex flex-wrap gap-4 mb-8">
                         <span className="text-xs font-mono text-muted-foreground">{formatTime(session.startTime)} – {formatTime(session.endTime)}</span>
                         <span className="text-xs font-mono text-border">|</span>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Event } from "@/types";
 import { notFound } from "next/navigation";
+import FavoriteButton from "@/components/FavoriteButton";
 
 async function getEvent(id: string): Promise<Event | null> {
     try {
@@ -79,6 +80,10 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                                                     <span className="text-foreground/60">{session.room?.name}</span>
                                                     <span className="text-foreground/60">{session.speakers?.map(s => s.fullName).join(", ")}</span>
                                                 </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 shrink-0">
+                                                <FavoriteButton sessionId={session.id} />
+                                                <span className="text-foreground/30 group-hover:text-primary transition-colors">→</span>
                                             </div>
                                             <span className="text-foreground/40 group-hover:text-primary transition-colors mt-1">→</span>
                                         </div>
