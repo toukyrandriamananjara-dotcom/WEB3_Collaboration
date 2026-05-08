@@ -1,6 +1,7 @@
 "use client";
-import { Session, Room } from "@/types";
+import { Session } from "@/types";
 import Link from "next/link";
+import FavoriteButton from "./FavoriteButton";
 
 function formatTime(dateStr: string) {
     return new Date(dateStr).toLocaleTimeString("fr-FR", {
@@ -9,22 +10,36 @@ function formatTime(dateStr: string) {
     });
 }
 
+function isLive(session: Session): boolean {
+    const now = new Date();
+    return new Date(session.startTime) <= now && new Date(session.endTime) >= now;
+}
+
 export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
     // Regroupement par salle
-    const roomsMap = new Map<string, { room: Room; sessions: Session[] }>();
+    const roomsMap = new Map<string, { roomId: string; roomName: string; sessions: Session[] }>();
     sessions.forEach((session) => {
         const roomId = session.room?.id || "unknown";
+        const roomName = session.room?.name || "Inconnue";
         if (!roomsMap.has(roomId)) {
-            roomsMap.set(roomId, { room: session.room!, sessions: [] });
+            roomsMap.set(roomId, { roomId, roomName, sessions: [] });
         }
         roomsMap.get(roomId)!.sessions.push(session);
     });
 
     const rooms = Array.from(roomsMap.values());
 
-    // Déterminer les créneaux horaires (toutes les heures de début uniques, triées)
+    // Créneaux horaires uniques triés
     const times = Array.from(new Set(sessions.map((s) => s.startTime)))
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+
+    if (rooms.length === 0 || times.length === 0) {
+        return (
+            <div className="p-8 text-center text-muted-foreground">
+                Aucune session à afficher.
+            </div>
+        );
+    }
 
     return (
         <div className="overflow-x-auto">
@@ -34,12 +49,12 @@ export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
                     <th className="border border-border bg-white/40 p-2 text-xs font-mono text-muted-foreground w-24">
                         Heure
                     </th>
-                    {rooms.map(({ room }) => (
+                    {rooms.map(({ roomId, roomName }) => (
                         <th
-                            key={room.id}
+                            key={roomId}
                             className="border border-border bg-white/40 p-2 text-xs font-mono text-muted-foreground"
                         >
-                            {room.name}
+                            {roomName}
                         </th>
                     ))}
                 </tr>
@@ -50,29 +65,39 @@ export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
                         <td className="border border-border p-2 text-xs font-mono text-muted-foreground">
                             {formatTime(time)}
                         </td>
-                        {rooms.map(({ room, sessions: roomSessions }) => {
+                        {rooms.map(({ roomId, sessions: roomSessions }) => {
                             const session = roomSessions.find(
                                 (s) => s.startTime === time
                             );
                             return (
-                                <td
-                                    key={room.id}
-                                    className="border border-border p-1 align-top"
-                                >
+                                <td key={roomId} className="border border-border p-1 align-top">
                                     {session ? (
-                                        <Link
-                                            href={`/sessions/${session.id}`}
-                                            className="block p-2 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-colors"
-                                        >
-                                            <div className="text-xs font-semibold text-foreground truncate">
-                                                {session.title}
+                                        <div className="relative">
+                                            {/* Lien principal vers la session */}
+                                            <Link
+                                                href={`/sessions/${session.id}`}
+                                                className="block p-2 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-colors"
+                                            >
+                                                {/* Badge Live */}
+                                                {isLive(session) && (
+                                                    <span className="badge-live mb-1">
+                              <span className="live-dot" />
+                              EN DIRECT
+                            </span>
+                                                )}
+                                                <div className="text-xs font-semibold text-foreground truncate">
+                                                    {session.title}
+                                                </div>
+                                                <div className="text-[10px] text-muted-foreground mt-1">
+                                                    {session.speakers?.map((s) => s.fullName).join(", ")}
+                                                </div>
+                                            </Link>
+
+                                            {/* Bouton favori en haut à droite */}
+                                            <div className="absolute top-1 right-1">
+                                                <FavoriteButton sessionId={session.id} />
                                             </div>
-                                            <div className="text-[10px] text-muted-foreground mt-1">
-                                                {session.speakers
-                                                    ?.map((s) => s.fullName)
-                                                    .join(", ")}
-                                            </div>
-                                        </Link>
+                                        </div>
                                     ) : null}
                                 </td>
                             );
