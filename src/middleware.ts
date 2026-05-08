@@ -27,7 +27,7 @@ export const config = {
         "/",
         "/events",
         "/events/:path*",
-        "/admin/:path*",
+        "/admin/((?!login).*)",
         "/sessions/:path*",
         "/speakers/:path*",
     ],

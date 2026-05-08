@@ -2,22 +2,24 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { Event, Speaker, Room } from "@/types";
+import { prisma } from "@/lib/prisma";
+import { Event } from "@/types";
+import AdminLogout from "./_components/AdminLogout";
 
 async function getData() {
     const base = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     try {
-        const [eventsRes, speakersRes, roomsRes] = await Promise.all([
+        const [eventsRes] = await Promise.all([
             fetch(`${base}/api/events`, { cache: "no-store" }),
-            fetch(`${base}/api/speakers`, { cache: "no-store" }),
-            fetch(`${base}/api/rooms`, { cache: "no-store" }),
         ]);
         const events: Event[] = eventsRes.ok ? await eventsRes.json() : [];
-        const speakers: Speaker[] = speakersRes.ok ? await speakersRes.json() : [];
-        const rooms: Room[] = roomsRes.ok ? await roomsRes.json() : [];
-        return { events, speakers, rooms };
+
+        // Compter le total de questions
+        const totalQuestions = await prisma.question.count();
+
+        return { events, totalQuestions };
     } catch {
-        return { events: [], speakers: [], rooms: [] };
+        return { events: [] as Event[], totalQuestions: 0 };
     }
 }
 
@@ -25,14 +27,13 @@ export default async function AdminDashboardPage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/admin/login");
 
-    const { events, speakers, rooms } = await getData();
+    const { events, totalQuestions } = await getData();
     const totalSessions = events.reduce((acc, e) => acc + e.sessions.length, 0);
 
     const stats = [
         { label: "Événements", value: events.length, href: "/admin/dashboard/events" },
         { label: "Sessions", value: totalSessions, href: "/admin/dashboard/events" },
-        { label: "Intervenants", value: speakers.length, href: "/admin/dashboard/speakers" },
-        { label: "Salles", value: rooms.length, href: "/admin/dashboard/rooms" },
+        { label: "Questions", value: totalQuestions, href: "/admin/dashboard/events" },
     ];
 
     return (
@@ -51,20 +52,22 @@ export default async function AdminDashboardPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 fade-up-1">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12 fade-up-1">
                 {stats.map(({ label, value, href }) => (
                     <Link key={label} href={href}>
                         <div className="card p-6 hover:border-zinc-700 transition-colors group">
                             <p className="text-4xl font-extrabold text-zinc-100 mb-1 group-hover:text-white transition-colors">
                                 {value}
                             </p>
-                            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">{label}</p>
+                            <p className="text-xs font-mono text-zinc-500 uppercase tracking-wider">
+                                {label}
+                            </p>
                         </div>
                     </Link>
                 ))}
             </div>
 
-            {/* Quick actions */}
+            {/* Quick actions (gestion) */}
             <div className="fade-up-2">
                 <h2 className="text-xl font-bold text-zinc-300 mb-5">Gestion</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -101,12 +104,17 @@ export default async function AdminDashboardPage() {
                 </div>
             </div>
 
-            {/* Recent events */}
+            {/* Événements récents */}
             {events.length > 0 && (
                 <div className="mt-12 fade-up-3">
                     <div className="flex items-center justify-between mb-5">
-                        <h2 className="text-xl font-bold text-zinc-300">Événements récents</h2>
-                        <Link href="/admin/dashboard/events" className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors">
+                        <h2 className="text-xl font-bold text-zinc-300">
+                            Événements récents
+                        </h2>
+                        <Link
+                            href="/admin/dashboard/events"
+                            className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors"
+                        >
                             Voir tout →
                         </Link>
                     </div>
@@ -119,10 +127,13 @@ export default async function AdminDashboardPage() {
                                             {event.title}
                                         </p>
                                         <p className="text-xs text-zinc-600 mt-0.5">
-                                            {event.sessions.length} session{event.sessions.length !== 1 ? "s" : ""} · {event.location}
+                                            {event.sessions.length} session
+                                            {event.sessions.length !== 1 ? "s" : ""} · {event.location}
                                         </p>
                                     </div>
-                                    <span className="text-zinc-700 group-hover:text-zinc-500 transition-colors">→</span>
+                                    <span className="text-zinc-700 group-hover:text-zinc-500 transition-colors">
+                    →
+                  </span>
                                 </div>
                             </Link>
                         ))}
@@ -132,6 +143,3 @@ export default async function AdminDashboardPage() {
         </div>
     );
 }
-
-// Client component for logout button
-import AdminLogout from "./_components/AdminLogout";

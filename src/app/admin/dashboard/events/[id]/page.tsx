@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Event, Session, Speaker, Room } from "@/types";
+import {router} from "next/client";
 
 export default function AdminEventDetailPage() {
     const params = useParams();
@@ -148,6 +149,14 @@ export default function AdminEventDetailPage() {
         </div>
     );
 
+    async function handleDeleteEvent() {
+        if (!confirm("Supprimer définitivement cet événement et toutes ses sessions ?")) return;
+        try {
+            await fetch(`/api/events/${eventId}`, { method: "DELETE" });
+            router.push("/admin/dashboard/events");
+        } catch {}
+    }
+
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
             {/* Back */}
@@ -167,12 +176,13 @@ export default function AdminEventDetailPage() {
                 >
                     {showEditForm ? "Annuler" : "Modifier l'événement"}
                 </button>
+                <button onClick={handleDeleteEvent} className="btn-danger shrink-0">Supprimer l&#39;événement</button>
             </div>
 
             {/* Edit event form */}
             {showEditForm && (
                 <div className="card p-6 mb-10 fade-up">
-                    <h2 className="text-lg font-bold text-zinc-200 mb-6">Modifier l'événement</h2>
+                    <h2 className="text-lg font-bold text-zinc-200 mb-6">Modifier l&#39;événement</h2>
                     <form onSubmit={handleEditEvent} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="md:col-span-2">
                             <label className="label">Titre</label>

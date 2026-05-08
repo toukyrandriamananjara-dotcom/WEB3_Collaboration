@@ -36,44 +36,45 @@ export default function AdminLoginPage() {
     return (
         <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-6">
             <div className="w-full max-w-sm fade-up">
-                {/* Header */}
                 <div className="mb-10 text-center">
                     <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-red-500 mb-3">
-                        Accès restreint
+                        ACCÈS RESTREINT
                     </p>
                     <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">
                         Administration
                     </h1>
                     <p className="text-sm text-zinc-500 mt-2">
-                        Connectez-vous pour gérer les événements
+                        Connectez-vous pour gérer la plateforme.
                     </p>
                 </div>
 
-                {/* Form */}
                 <div className="card p-8">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                         <div>
-                            <label className="label" htmlFor="email">Email</label>
+                            <label className="label" htmlFor="email">
+                                Email
+                            </label>
                             <input
                                 id="email"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="admin@eventsync.com"
+                                placeholder="admin@myvent.com"
                                 required
                                 autoComplete="email"
                                 className="input"
                             />
                         </div>
-
                         <div>
-                            <label className="label" htmlFor="password">Mot de passe</label>
+                            <label className="label" htmlFor="password">
+                                Mot de passe
+                            </label>
                             <input
                                 id="password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                placeholder="••••••••"
+                                placeholder="••••"
                                 required
                                 autoComplete="current-password"
                                 className="input"
@@ -97,14 +98,17 @@ export default function AdminLoginPage() {
                                     Connexion...
                                 </>
                             ) : (
-                                "Se connecter"
+                                "Accéder au dashboard"
                             )}
                         </button>
                     </form>
                 </div>
 
                 <div className="mt-6 text-center">
-                    <Link href="/" className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors">
+                    <Link
+                        href="/"
+                        className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors"
+                    >
                         ← Retour au site
                     </Link>
                 </div>

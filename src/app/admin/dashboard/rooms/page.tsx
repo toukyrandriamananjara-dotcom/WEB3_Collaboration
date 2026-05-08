@@ -9,7 +9,6 @@ export default function AdminRoomsPage() {
     const [loading, setLoading] = useState(true);
     const [name, setName] = useState("");
     const [submitting, setSubmitting] = useState(false);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchRooms();
@@ -43,29 +42,25 @@ export default function AdminRoomsPage() {
         }
     }
 
-    async function handleDelete(id: string) {
-        if (!confirm("Supprimer cette salle ? Les sessions associées perdront leur salle.")) return;
-        setDeletingId(id);
-        try {
-            await fetch(`/api/rooms/${id}`, { method: "DELETE" });
-            fetchRooms();
-        } finally {
-            setDeletingId(null);
-        }
-    }
-
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
             <div className="mb-10">
-                <Link href="/admin/dashboard" className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block">
+                <Link
+                    href="/admin/dashboard"
+                    className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block"
+                >
                     ← Dashboard
                 </Link>
-                <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">Salles</h1>
+                <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">
+                    Salles
+                </h1>
             </div>
 
             {/* Create form */}
             <div className="card p-6 mb-8 fade-up">
-                <h2 className="text-lg font-bold text-zinc-200 mb-5">Ajouter une salle</h2>
+                <h2 className="text-lg font-bold text-zinc-200 mb-5">
+                    Ajouter une salle
+                </h2>
                 <form onSubmit={handleCreate} className="flex gap-3">
                     <input
                         value={name}
@@ -74,8 +69,12 @@ export default function AdminRoomsPage() {
                         required
                         className="input flex-1"
                     />
-                    <button type="submit" disabled={submitting || !name.trim()} className="btn-primary shrink-0">
-                        {submitting ? "Création..." : "Ajouter"}
+                    <button
+                        type="submit"
+                        disabled={submitting || !name.trim()}
+                        className="btn-primary shrink-0"
+                    >
+                        {submitting ? "Ajout..." : "Ajouter"}
                     </button>
                 </form>
             </div>
@@ -90,25 +89,16 @@ export default function AdminRoomsPage() {
                     <p className="text-xs font-mono text-zinc-600">Aucune salle créée</p>
                 </div>
             ) : (
-                <div className="flex flex-col gap-2 fade-up-1">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 fade-up-1">
                     {rooms.map((room) => (
                         <div
                             key={room.id}
-                            className="card px-5 py-4 flex items-center justify-between hover:border-zinc-700 transition-colors"
+                            className="card p-5 flex flex-col items-center justify-center text-center hover:border-zinc-700 transition-colors"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center">
-                                    <span className="text-xs font-mono text-zinc-500">🏛️</span>
-                                </div>
-                                <p className="font-medium text-zinc-200">{room.name}</p>
+                            <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center mb-3">
+                                <span className="text-xl">🏛️</span>
                             </div>
-                            <button
-                                onClick={() => handleDelete(room.id)}
-                                disabled={deletingId === room.id}
-                                className="btn-danger text-xs py-1.5"
-                            >
-                                {deletingId === room.id ? "Suppression..." : "Supprimer"}
-                            </button>
+                            <p className="font-medium text-zinc-200">{room.name}</p>
                         </div>
                     ))}
                 </div>

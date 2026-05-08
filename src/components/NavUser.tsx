@@ -9,7 +9,7 @@ const roleLabel: Record<string, string> = {
     user: "Participant",
 };
 
-const roleColor: Record<string, string> = {         
+const roleColor: Record<string, string> = {
     admin: "text-red-400 border-red-500/30 bg-red-500/10",
     speaker: "text-blue-400 border-blue-500/30 bg-blue-500/10",
     user: "text-zinc-400 border-zinc-700 bg-zinc-800",
@@ -29,13 +29,13 @@ export default function NavUser() {
                     href="/login"
                     className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors font-medium"
                 >
-                    Connexion
+                    Se connecter
                 </Link>
                 <Link
                     href="/signup"
                     className="text-xs font-mono tracking-wider text-zinc-900 bg-zinc-100 px-3.5 py-1.5 rounded-md hover:bg-white transition-colors font-semibold"
                 >
-                    S&#39;inscrire
+                    Créer un compte
                 </Link>
             </div>
         );
@@ -46,17 +46,16 @@ export default function NavUser() {
 
     return (
         <div className="flex items-center gap-3">
-            {/* Role badge */}
-            <span className={`text-[10px] font-mono tracking-widest uppercase border px-2 py-0.5 rounded-sm ${roleColor[role] || roleColor.user}`}>
+      <span
+          className={`text-[10px] font-mono tracking-widest uppercase border px-2 py-0.5 rounded-sm ${
+              roleColor[role] || roleColor.user
+          }`}
+      >
         {roleLabel[role] || role}
       </span>
-
-            {/* Name */}
             <span className="text-sm text-zinc-300 font-medium hidden sm:block">
         {name}
       </span>
-
-            {/* Admin link */}
             {role === "admin" && (
                 <Link
                     href="/admin/dashboard"
@@ -65,8 +64,6 @@ export default function NavUser() {
                     Dashboard
                 </Link>
             )}
-
-            {/* Logout */}
             <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
                 className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors border border-zinc-800 px-3 py-1.5 rounded-md hover:border-zinc-700"
