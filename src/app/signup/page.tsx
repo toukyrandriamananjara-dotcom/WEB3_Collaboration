@@ -35,7 +35,7 @@ export default function SignupPage() {
 
             const result = await signIn("credentials", { email: form.email, password: form.password, redirect: false });
             if (result?.error) router.push("/login");
-            else { router.push("/"); router.refresh(); }
+            else { router.push("/events"); router.refresh(); }
         } finally { setLoading(false); }
     }
 
@@ -44,14 +44,14 @@ export default function SignupPage() {
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="text-center md:text-left fade-up">
                     <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-primary mb-3">LIVE · Q&A · PLANNING</p>
-                    <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">L&apos;événementiel mérite une expérience à la hauteur.</h2>
+                    <h2 className="text-4xl md:text-4xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">L&apos;événementiel mérite une expérience à la hauteur.</h2>
                     <p className="text-base text-muted-foreground leading-relaxed">Suivez les sessions, posez vos questions et vibrez en temps réel avec les autres participants.</p>
                     <p className="mt-6 text-xs font-mono text-foreground/40">© 2026 MyVent</p>
                 </div>
 
                 <div className="fade-up-1">
                     <div className="mb-8">
-                        <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-2">Créer votre compte</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Créer votre compte</h1>
                         <p className="text-sm text-muted-foreground">Rejoignez MyVent et profitez des événements en direct.</p>
                     </div>
 

@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
                 {stats.map(({ label, value, href }) => (
                     <Link key={label} href={href}>
                         <div className="glass-card p-6 hover:shadow-md transition-colors group">
-                            <p className="text-4xl font-extrabold text-foreground mb-1 group-hover:text-primary transition-colors">{value}</p>
+                            <p className="text-4xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{value}</p>
                             <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider">{label}</p>
                         </div>
                     </Link>
