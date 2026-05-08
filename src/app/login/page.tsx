@@ -58,6 +58,7 @@ export default function LoginPage() {
                 {/* Card */}
                 <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        {/* Email */}
                         <div>
                             <label className="text-[10px] font-mono tracking-[0.15em] uppercase text-zinc-500 mb-1.5 block">
                                 Email
@@ -73,6 +74,7 @@ export default function LoginPage() {
                             />
                         </div>
 
+                        {/* Password */}
                         <div>
                             <label className="text-[10px] font-mono tracking-[0.15em] uppercase text-zinc-500 mb-1.5 block">
                                 Mot de passe
@@ -133,6 +135,17 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
+
+            {/* 🔹 BOUTON ADMIN FLOTTANT (en bas à droite) */}
+            <Link
+                href="/admin/login"
+                className="fixed bottom-5 right-5 z-50 bg-zinc-800/80 backdrop-blur-sm hover:bg-zinc-700/90 border border-zinc-700 rounded-full w-12 h-12 flex items-center justify-center transition-all duration-200 group shadow-lg"
+                title="Accès admin"
+            >
+                <span className="text-lg font-mono font-bold text-zinc-400 group-hover:text-white transition-colors">
+                    ⚙️
+                </span>
+            </Link>
         </div>
     );
 }
