@@ -32,7 +32,7 @@ export default function LoginPage() {
             <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="text-center md:text-left fade-up">
                     <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-primary mb-3">LIVE · Q&A · PLANNING</p>
-                    <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">L&apos;événementiel mérite une expérience à la hauteur.</h2>
+                    <h2 className="text-4xl md:text-4xl font-extrabold tracking-tight text-foreground mb-6 leading-tight">L&apos;événementiel mérite une expérience à la hauteur.</h2>
                     <p className="text-base text-muted-foreground leading-relaxed">Suivez les sessions, posez vos questions et vibrez en temps réel avec les autres participants.</p>
                     <p className="mt-6 text-xs font-mono text-foreground/40">© 2026 MyVent</p>
                 </div>
@@ -66,6 +66,15 @@ export default function LoginPage() {
                     </div>
                 </div>
             </div>
+            <Link
+                href="/admin/login"
+                className="fixed bottom-5 right-5 z-50 bg-white/80 backdrop-blur-sm hover:bg-primary/10 border border-border rounded-full w-64 h-14 flex items-center justify-center transition-all duration-200 group shadow-lg"
+                title="Accès admin"
+            >
+        <span className="text-lg font-mono font-bold text-primary group-hover:text-primary/80 transition-colors">
+          ⚙️Admin Access
+        </span>
+            </Link>
         </div>
     );
 }

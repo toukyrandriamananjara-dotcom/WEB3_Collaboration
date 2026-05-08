@@ -29,7 +29,7 @@ export default async function EventsPage() {
         <div className="max-w-6xl mx-auto px-6 py-16">
             <div className="mb-16 fade-up">
                 <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-primary mb-4">Plateforme événementielle</p>
-                <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-foreground mb-5 leading-none">Événements</h1>
+                <h1 className="text-6xl md:text-6xl font-extrabold tracking-tight text-foreground mb-5 leading-none">Événements</h1>
                 <p className="text-base text-muted-foreground max-w-md leading-relaxed">Suivez les sessions en direct, posez vos questions et naviguez dans le planning en temps réel.</p>
             </div>
 

@@ -45,7 +45,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 <p className="text-[10px] font-mono tracking-[0.25em] uppercase text-primary mb-3">
                     {formatDateRange(event.startDate, event.endDate)} · {event.location}
                 </p>
-                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground leading-tight mb-4">
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground leading-tight mb-4">
                     {event.title}
                 </h1>
                 {event.description && (
