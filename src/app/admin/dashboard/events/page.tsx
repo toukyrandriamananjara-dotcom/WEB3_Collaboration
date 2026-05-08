@@ -11,7 +11,6 @@ export default function AdminEventsPage() {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const [deletingId, setDeletingId] = useState<string | null>(null);
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -56,17 +55,6 @@ export default function AdminEventsPage() {
         }
     }
 
-    async function handleDelete(id: string) {
-        if (!confirm("Supprimer cet événement et toutes ses sessions ?")) return;
-        setDeletingId(id);
-        try {
-            await fetch(`/api/events/${id}`, { method: "DELETE" });
-            fetchEvents();
-        } finally {
-            setDeletingId(null);
-        }
-    }
-
     function formatDate(dateStr: string) {
         return new Date(dateStr).toLocaleDateString("fr-FR", {
             day: "numeric",
@@ -80,23 +68,30 @@ export default function AdminEventsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-10">
                 <div>
-                    <Link href="/admin/dashboard" className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block">
+                    <Link
+                        href="/admin/dashboard"
+                        className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block"
+                    >
                         ← Dashboard
                     </Link>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">Événements</h1>
+                    <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">
+                        Événements
+                    </h1>
                 </div>
                 <button
                     onClick={() => setShowForm(!showForm)}
                     className="btn-primary"
                 >
-                    {showForm ? "Annuler" : "+ Créer un événement"}
+                    {showForm ? "Annuler" : "+ Nouvel événement"}
                 </button>
             </div>
 
             {/* Create form */}
             {showForm && (
                 <div className="card p-6 mb-8 fade-up">
-                    <h2 className="text-lg font-bold text-zinc-200 mb-6">Nouvel événement</h2>
+                    <h2 className="text-lg font-bold text-zinc-200 mb-6">
+                        Nouvel événement
+                    </h2>
                     <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="md:col-span-2">
                             <label className="label">Titre *</label>
@@ -167,7 +162,7 @@ export default function AdminEventsPage() {
                 </div>
             ) : events.length === 0 ? (
                 <div className="border border-dashed border-zinc-800 rounded-xl p-16 text-center">
-                    <p className="text-xs font-mono text-zinc-600 mb-4">Aucun événement créé</p>
+                    <p className="text-xs font-mono text-zinc-600">Aucun événement créé</p>
                     <button onClick={() => setShowForm(true)} className="btn-secondary text-xs">
                         Créer le premier événement
                     </button>
@@ -198,13 +193,6 @@ export default function AdminEventsPage() {
                                 >
                                     Gérer
                                 </Link>
-                                <button
-                                    onClick={() => handleDelete(event.id)}
-                                    disabled={deletingId === event.id}
-                                    className="btn-danger text-xs py-1.5"
-                                >
-                                    {deletingId === event.id ? "..." : "Supprimer"}
-                                </button>
                             </div>
                         </div>
                     ))}
