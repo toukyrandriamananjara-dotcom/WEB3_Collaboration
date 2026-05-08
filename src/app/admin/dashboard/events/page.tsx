@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Event } from "@/types";
 
 export default function AdminEventsPage() {
-    const router = useRouter();
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -19,17 +17,13 @@ export default function AdminEventsPage() {
         location: "",
     });
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+    useEffect(() => { fetchEvents(); }, []);
 
     async function fetchEvents() {
         try {
             const res = await fetch("/api/events");
             if (res.ok) setEvents(await res.json());
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     }
 
     async function handleCreate(e: React.FormEvent) {
@@ -50,48 +44,38 @@ export default function AdminEventsPage() {
                 setShowForm(false);
                 fetchEvents();
             }
-        } finally {
-            setSubmitting(false);
-        }
+        } finally { setSubmitting(false); }
     }
 
     function formatDate(dateStr: string) {
         return new Date(dateStr).toLocaleDateString("fr-FR", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
+            day: "numeric", month: "short", year: "numeric",
         });
     }
 
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
-            {/* Header */}
             <div className="flex items-center justify-between mb-10">
                 <div>
                     <Link
                         href="/admin/dashboard"
-                        className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block"
+                        className="text-xs font-mono text-muted-foreground hover:text-primary transition-colors mb-3 inline-block"
                     >
                         ← Dashboard
                     </Link>
-                    <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground">
                         Événements
                     </h1>
                 </div>
-                <button
-                    onClick={() => setShowForm(!showForm)}
-                    className="btn-primary"
-                >
+                <button onClick={() => setShowForm(!showForm)} className="btn-primary">
                     {showForm ? "Annuler" : "+ Nouvel événement"}
                 </button>
             </div>
 
-            {/* Create form */}
+            {/* Formulaire de création */}
             {showForm && (
-                <div className="card p-6 mb-8 fade-up">
-                    <h2 className="text-lg font-bold text-zinc-200 mb-6">
-                        Nouvel événement
-                    </h2>
+                <div className="glass-card p-6 mb-8 fade-up">
+                    <h2 className="text-lg font-bold text-foreground mb-6">Nouvel événement</h2>
                     <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="md:col-span-2">
                             <label className="label">Titre *</label>
@@ -155,15 +139,15 @@ export default function AdminEventsPage() {
                 </div>
             )}
 
-            {/* Events list */}
+            {/* Liste des événements */}
             {loading ? (
                 <div className="text-center py-20">
-                    <div className="w-5 h-5 rounded-full border-2 border-zinc-800 border-t-zinc-500 animate-spin mx-auto" />
+                    <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
                 </div>
             ) : events.length === 0 ? (
-                <div className="border border-dashed border-zinc-800 rounded-xl p-16 text-center">
-                    <p className="text-xs font-mono text-zinc-600">Aucun événement créé</p>
-                    <button onClick={() => setShowForm(true)} className="btn-secondary text-xs">
+                <div className="border border-dashed border-border rounded-xl p-16 text-center">
+                    <p className="text-xs font-mono text-muted-foreground">Aucun événement créé</p>
+                    <button onClick={() => setShowForm(true)} className="btn-secondary text-xs mt-4">
                         Créer le premier événement
                     </button>
                 </div>
@@ -172,16 +156,16 @@ export default function AdminEventsPage() {
                     {events.map((event) => (
                         <div
                             key={event.id}
-                            className="card p-5 flex items-center justify-between gap-6 hover:border-zinc-700 transition-colors"
+                            className="glass-card p-5 flex items-center justify-between gap-6 hover:shadow-md transition-all"
                         >
                             <div className="flex-1 min-w-0">
-                                <h3 className="font-semibold text-zinc-100 mb-1">{event.title}</h3>
+                                <h3 className="font-semibold text-foreground mb-1">{event.title}</h3>
                                 <div className="flex flex-wrap gap-3">
-                                    <span className="text-xs font-mono text-zinc-500">{event.location}</span>
-                                    <span className="text-xs text-zinc-600">
+                                    <span className="text-xs font-mono text-muted-foreground">{event.location}</span>
+                                    <span className="text-xs text-muted-foreground">
                     {formatDate(event.startDate)} → {formatDate(event.endDate)}
                   </span>
-                                    <span className="text-xs text-zinc-600">
+                                    <span className="text-xs text-muted-foreground">
                     {event.sessions.length} session{event.sessions.length !== 1 ? "s" : ""}
                   </span>
                                 </div>
