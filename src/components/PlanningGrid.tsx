@@ -16,7 +16,6 @@ function isLive(session: Session): boolean {
 }
 
 export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
-    // Regroupement par salle
     const roomsMap = new Map<string, { roomId: string; roomName: string; sessions: Session[] }>();
     sessions.forEach((session) => {
         const roomId = session.room?.id || "unknown";
@@ -28,8 +27,6 @@ export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
     });
 
     const rooms = Array.from(roomsMap.values());
-
-    // Créneaux horaires uniques triés
     const times = Array.from(new Set(sessions.map((s) => s.startTime)))
         .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
@@ -54,7 +51,9 @@ export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
                             key={roomId}
                             className="border border-border bg-white/40 p-2 text-xs font-mono text-muted-foreground"
                         >
-                            {roomName}
+                            <Link href={`/rooms/${roomId}`} className="hover:text-primary">
+                                {roomName}
+                            </Link>
                         </th>
                     ))}
                 </tr>
@@ -62,43 +61,43 @@ export default function PlanningGrid({ sessions }: { sessions: Session[] }) {
                 <tbody>
                 {times.map((time) => (
                     <tr key={time}>
-                        <td className="border border-border p-2 text-xs font-mono text-muted-foreground">
+                        <td className="border border-border p-2 text-xs font-mono text-muted-foreground align-top">
                             {formatTime(time)}
                         </td>
                         {rooms.map(({ roomId, sessions: roomSessions }) => {
-                            const session = roomSessions.find(
+                            const sessionsAtTime = roomSessions.filter(
                                 (s) => s.startTime === time
                             );
                             return (
                                 <td key={roomId} className="border border-border p-1 align-top">
-                                    {session ? (
-                                        <div className="relative">
-                                            {/* Lien principal vers la session */}
-                                            <Link
-                                                href={`/sessions/${session.id}`}
-                                                className="block p-2 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-colors"
-                                            >
-                                                {/* Badge Live */}
-                                                {isLive(session) && (
-                                                    <span className="badge-live mb-1">
-                              <span className="live-dot" />
-                              EN DIRECT
-                            </span>
-                                                )}
-                                                <div className="text-xs font-semibold text-foreground truncate">
-                                                    {session.title}
+                                    {sessionsAtTime.length > 0 && (
+                                        <div className="space-y-1">
+                                            {sessionsAtTime.map((session) => (
+                                                <div key={session.id} className="relative">
+                                                    <Link
+                                                        href={`/sessions/${session.id}`}
+                                                        className="block p-2 rounded-lg bg-primary/5 hover:bg-primary/10 border border-primary/20 transition-colors"
+                                                    >
+                                                        {isLive(session) && (
+                                                            <span className="badge-live mb-1">
+                                  <span className="live-dot" />
+                                  EN DIRECT
+                                </span>
+                                                        )}
+                                                        <div className="text-xs font-semibold text-foreground truncate">
+                                                            {session.title}
+                                                        </div>
+                                                        <div className="text-[10px] text-muted-foreground mt-1">
+                                                            {session.speakers?.map((s) => s.fullName).join(", ")}
+                                                        </div>
+                                                    </Link>
+                                                    <div className="absolute top-1 right-1">
+                                                        <FavoriteButton sessionId={session.id} />
+                                                    </div>
                                                 </div>
-                                                <div className="text-[10px] text-muted-foreground mt-1">
-                                                    {session.speakers?.map((s) => s.fullName).join(", ")}
-                                                </div>
-                                            </Link>
-
-                                            {/* Bouton favori en haut à droite */}
-                                            <div className="absolute top-1 right-1">
-                                                <FavoriteButton sessionId={session.id} />
-                                            </div>
+                                            ))}
                                         </div>
-                                    ) : null}
+                                    )}
                                 </td>
                             );
                         })}

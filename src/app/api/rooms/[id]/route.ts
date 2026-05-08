@@ -21,3 +21,4 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     if (!room) return NextResponse.json({ error: "Salle introuvable" }, { status: 404 });
     return NextResponse.json(room);
 }
+

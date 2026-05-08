@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Event } from "@/types";
 import PlanningGrid from "./PlanningGrid";
 import FavoriteButton from "./FavoriteButton";
@@ -19,6 +20,7 @@ function isLive(session: Event["sessions"][number]) {
 
 export default function EventViewToggler({ event }: { event: Event }) {
     const [view, setView] = useState<"list" | "grid">("list");
+    const router = useRouter();
 
     const sessionsSorted = [...event.sessions].sort(
         (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
@@ -74,7 +76,17 @@ export default function EventViewToggler({ event }: { event: Event }) {
                       <span className="font-mono text-muted-foreground">
                         {formatTime(session.startTime)} – {formatTime(session.endTime)}
                       </span>
-                                            <span className="text-foreground/60">{session.room?.name}</span>
+                                            {/* Nom de salle cliquable sans <a> à l'intérieur d'un autre <a> */}
+                                            <span
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    router.push(`/rooms/${session.room?.id}`);
+                                                }}
+                                                className="text-foreground/60 hover:text-primary underline-offset-2 hover:underline cursor-pointer"
+                                            >
+                        {session.room?.name}
+                      </span>
                                             <span className="text-foreground/60">
                         {session.speakers?.map((s) => s.fullName).join(", ")}
                       </span>
