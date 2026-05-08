@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Room } from "@/types";
 import Link from "next/link";
+import { Room } from "@/types";
 
 export default function AdminRoomsPage() {
     const [rooms, setRooms] = useState<Room[]>([]);
@@ -10,17 +10,13 @@ export default function AdminRoomsPage() {
     const [name, setName] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
-    useEffect(() => {
-        fetchRooms();
-    }, []);
+    useEffect(() => { fetchRooms(); }, []);
 
     async function fetchRooms() {
         try {
             const res = await fetch("/api/rooms");
             if (res.ok) setRooms(await res.json());
-        } finally {
-            setLoading(false);
-        }
+        } finally { setLoading(false); }
     }
 
     async function handleCreate(e: React.FormEvent) {
@@ -37,9 +33,7 @@ export default function AdminRoomsPage() {
                 setName("");
                 fetchRooms();
             }
-        } finally {
-            setSubmitting(false);
-        }
+        } finally { setSubmitting(false); }
     }
 
     return (
@@ -47,20 +41,16 @@ export default function AdminRoomsPage() {
             <div className="mb-10">
                 <Link
                     href="/admin/dashboard"
-                    className="text-xs font-mono text-zinc-600 hover:text-zinc-400 transition-colors mb-3 inline-block"
+                    className="text-xs font-mono text-muted-foreground hover:text-primary transition-colors mb-3 inline-block"
                 >
                     ← Dashboard
                 </Link>
-                <h1 className="text-4xl font-extrabold tracking-tight text-zinc-100">
-                    Salles
-                </h1>
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Salles</h1>
             </div>
 
-            {/* Create form */}
-            <div className="card p-6 mb-8 fade-up">
-                <h2 className="text-lg font-bold text-zinc-200 mb-5">
-                    Ajouter une salle
-                </h2>
+            {/* Formulaire d'ajout */}
+            <div className="glass-card p-6 mb-8 fade-up">
+                <h2 className="text-lg font-bold text-foreground mb-5">Ajouter une salle</h2>
                 <form onSubmit={handleCreate} className="flex gap-3">
                     <input
                         value={name}
@@ -79,26 +69,26 @@ export default function AdminRoomsPage() {
                 </form>
             </div>
 
-            {/* List */}
+            {/* Grille des salles */}
             {loading ? (
                 <div className="text-center py-16">
-                    <div className="w-5 h-5 rounded-full border-2 border-zinc-800 border-t-zinc-500 animate-spin mx-auto" />
+                    <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
                 </div>
             ) : rooms.length === 0 ? (
-                <div className="border border-dashed border-zinc-800 rounded-xl p-16 text-center">
-                    <p className="text-xs font-mono text-zinc-600">Aucune salle créée</p>
+                <div className="border border-dashed border-border rounded-xl p-16 text-center">
+                    <p className="text-xs font-mono text-muted-foreground">Aucune salle créée</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 fade-up-1">
                     {rooms.map((room) => (
                         <div
                             key={room.id}
-                            className="card p-5 flex flex-col items-center justify-center text-center hover:border-zinc-700 transition-colors"
+                            className="glass-card p-5 flex flex-col items-center justify-center text-center hover:shadow-md transition-all"
                         >
-                            <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center mb-3">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
                                 <span className="text-xl">🏛️</span>
                             </div>
-                            <p className="font-medium text-zinc-200">{room.name}</p>
+                            <p className="font-medium text-foreground">{room.name}</p>
                         </div>
                     ))}
                 </div>
