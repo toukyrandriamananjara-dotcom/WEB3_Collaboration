@@ -12,7 +12,10 @@ export default async function SpeakerDashboardPage() {
         where: { email: session.user.email! },
         include: {
             sessions: {
-                include: { event: true },
+                include: {
+                    event: true,
+                    _count: { select: { questions: true } }, // compteur de questions
+                },
                 orderBy: { startTime: "asc" },
             },
         },
@@ -38,25 +41,35 @@ export default async function SpeakerDashboardPage() {
                 </div>
             ) : (
                 <div className="grid gap-4">
-                    {speaker.sessions.map((session) => (
-                        <div key={session.id} className="glass-card p-4 flex items-center justify-between">
-                            <div>
-                                <h3 className="font-semibold text-foreground">{session.title}</h3>
-                                <p className="text-sm text-muted-foreground">
-                                    {session.event?.title} ·{" "}
-                                    {new Date(session.startTime).toLocaleString("fr-FR", {
-                                        day: "numeric",
-                                        month: "short",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    })}
-                                </p>
+                    {speaker.sessions.map((session) => {
+                        const questionCount = session._count?.questions ?? 0;
+                        return (
+                            <div
+                                key={session.id}
+                                className="glass-card p-4 flex items-center justify-between"
+                            >
+                                <div>
+                                    <h3 className="font-semibold text-foreground">{session.title}</h3>
+                                    <p className="text-sm text-muted-foreground">
+                                        {session.event?.title} ·{" "}
+                                        {new Date(session.startTime).toLocaleString("fr-FR", {
+                                            day: "numeric",
+                                            month: "short",
+                                            hour: "2-digit",
+                                            minute: "2-digit",
+                                        })}
+                                    </p>
+                                </div>
+                                <Link
+                                    href={`/speaker/sessions/${session.id}/questions`}
+                                    className="btn-primary text-xs"
+                                >
+                                    Questions
+                                    {questionCount > 0 && ` (${questionCount})`}
+                                </Link>
                             </div>
-                            <Link href={`/speaker/sessions/${session.id}/questions`} className="btn-primary text-xs">
-                                Questions
-                            </Link>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>
