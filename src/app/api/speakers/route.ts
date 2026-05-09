@@ -8,8 +8,10 @@ export async function GET() {
                 include: {
                     event: true,
                     room: true,
+                    _count: { select: { questions: true } }
                 },
-            },
+                orderBy: { startTime: 'asc' }
+            }
         },
     });
     return NextResponse.json(speakers);
