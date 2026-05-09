@@ -22,10 +22,18 @@ export interface Speaker {
 export interface Question {
     id: string;
     content: string;
-    authorName?: string;
+    authorName: string | null;
     upvotes: number;
     sessionId: string;
     createdAt: string;
+    answer?: {
+        id: string;
+        content: string;
+        createdAt: string;
+        speaker?: {
+            fullName: string;
+        };
+    } | null;
 }
 
 export interface Session {

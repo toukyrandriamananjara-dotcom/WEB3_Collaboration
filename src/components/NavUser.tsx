@@ -36,6 +36,14 @@ export default function NavUser() {
                   : "bg-secondary text-foreground/60 border-border"
       }`}>
         {role === "admin" ? "Admin" : role === "speaker" ? "Intervenant" : "Participant"}
+          {role === "speaker" && (
+              <Link
+                  href="/speaker/dashboard"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                  Mon espace
+              </Link>
+          )}
       </span>
             <span className="text-sm text-foreground/80 font-medium hidden sm:block">{name}</span>
             {role === "admin" && (

@@ -6,8 +6,20 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     const questions = await prisma.question.findMany({
         where: { sessionId: id },
         orderBy: { upvotes: "desc" },
+        include: {
+            answers: {
+                include: { speaker: true },
+            },
+        },
     });
-    return NextResponse.json(questions);
+
+
+    const formatted = questions.map((q) => ({
+        ...q,
+        answer: q.answers.length > 0 ? q.answers[0] : null,
+    }));
+
+    return NextResponse.json(formatted);
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
