@@ -14,31 +14,33 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) return null;
 
-                // Cherche dans Admin
+                // 1. Admin
                 const admin = await prisma.admin.findUnique({
                     where: { email: credentials.email },
                 });
-                if (admin) {
-                    const ok = await bcrypt.compare(credentials.password, admin.passwordHash);
-                    if (ok) return { id: admin.id, email: admin.email, role: "admin", name: "Admin" };
+                if (admin && await bcrypt.compare(credentials.password, admin.passwordHash)) {
+                    return { id: admin.id, email: admin.email, role: "admin", name: "Admin" };
                 }
 
-                // Cherche dans Speaker
+                // 2. Speaker
                 const speaker = await prisma.speaker.findUnique({
                     where: { email: credentials.email },
                 });
-                if (speaker?.passwordHash) {
-                    const ok = await bcrypt.compare(credentials.password, speaker.passwordHash);
-                    if (ok) return { id: speaker.id, email: speaker.email!, role: "speaker", name: speaker.fullName };
+                if (speaker?.passwordHash && await bcrypt.compare(credentials.password, speaker.passwordHash)) {
+                    return {
+                        id: speaker.id,
+                        email: speaker.email!,
+                        name: speaker.fullName,
+                        role: "speaker",
+                    };
                 }
 
-                // Cherche dans User
+                // 3. User
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
                 });
-                if (user) {
-                    const ok = await bcrypt.compare(credentials.password, user.passwordHash);
-                    if (ok) return { id: user.id, email: user.email, role: "user", name: user.name };
+                if (user && await bcrypt.compare(credentials.password, user.passwordHash)) {
+                    return { id: user.id, email: user.email, role: "user", name: user.name };
                 }
 
                 return null;
