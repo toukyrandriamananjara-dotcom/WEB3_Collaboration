@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { eventEmitter } from "@/lib/eventEmitter";
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -54,6 +55,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
             sessionId: id,
         },
     });
+
+    eventEmitter.emit("new-question", { sessionId: id, question });
 
     return NextResponse.json(question, { status: 201 });
 }

@@ -84,6 +84,7 @@ model Question {
   createdAt  DateTime @default(now())
   session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   answers    Answer[]
+  isVisible  Boolean  @default(true)
 }
 
 model Admin {

@@ -22,3 +22,27 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     return NextResponse.json(room);
 }
 
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
+    const { id } = await params;
+    const body = await request.json();
+    const { name } = body;
+
+    if (!name || typeof name !== "string") {
+        return NextResponse.json({ error: "Nom requis" }, { status: 400 });
+    }
+
+    try {
+        const updatedRoom = await prisma.room.update({
+            where: { id },
+            data: { name },
+        });
+        return NextResponse.json(updatedRoom);
+    } catch (error) {
+        return NextResponse.json({ error: "Erreur lors de la mise à jour" }, { status: 500 });
+    }
+}
+
+

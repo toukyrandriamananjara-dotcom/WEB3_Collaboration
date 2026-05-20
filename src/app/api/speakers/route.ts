@@ -14,5 +14,10 @@ export async function GET() {
             }
         },
     });
-    return NextResponse.json(speakers);
+    return NextResponse.json(speakers, {
+        headers: {
+            "Content-Range": `speakers 0-${speakers.length - 1}/${speakers.length}`,
+            "Access-Control-Expose-Headers": "Content-Range",
+        },
+    });
 }
