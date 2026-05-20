@@ -13,7 +13,12 @@ export async function GET() {
         },
         orderBy: { startDate: "asc" },
     });
-    return NextResponse.json(events);
+    return NextResponse.json(events, {
+        headers: {
+            "Content-Range": `events 0-${events.length - 1}/${events.length}`,
+            "Access-Control-Expose-Headers": "Content-Range",
+        },
+    });
 }
 
 // POST /api/events — admin

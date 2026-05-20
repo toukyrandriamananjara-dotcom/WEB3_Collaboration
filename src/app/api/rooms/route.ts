@@ -7,7 +7,12 @@ export async function GET() {
     const rooms = await prisma.room.findMany({
         include: { sessions: { include: { speakers: true }, orderBy: { startTime: "asc" } } },
     });
-    return NextResponse.json(rooms);
+    return NextResponse.json(rooms, {
+        headers: {
+            "Content-Range": `rooms 0-${rooms.length - 1}/${rooms.length}`,
+            "Access-Control-Expose-Headers": "Content-Range",
+        },
+    });
 }
 
 // POST /api/rooms — admin
