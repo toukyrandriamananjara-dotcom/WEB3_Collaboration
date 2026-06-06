@@ -1,4 +1,3 @@
-// src/lib/ra-data-provider.ts
 import { fetchUtils, DataProvider } from "react-admin";
 import simpleRestProvider from "ra-data-simple-rest";
 
@@ -32,36 +31,36 @@ export const dataProvider: DataProvider = {
         }
     },
 
-    create: async (resource, params) => {
-        // Gestion spécifique pour les sessions
-        if (resource === "sessions") {
-            const { eventId, ...sessionData } = params.data;
-            if (!eventId) throw new Error("eventId is required");
-            const { json } = await httpClient(`${apiUrl}/events/${eventId}/sessions`, {
-                method: "POST",
-                body: JSON.stringify(sessionData),
-            });
-            return { data: { ...json, id: json.id } };
-        }
+create: async (resource: string, params: any) => {
+    // Gestion spécifique pour les sessions
+    if (resource === "sessions") {
+        const { eventId, ...sessionData } = params.data;
+        if (!eventId) throw new Error("eventId is required");
+        const { json } = await httpClient(`${apiUrl}/events/${eventId}/sessions`, {
+            method: "POST",
+            body: JSON.stringify(sessionData),
+        });
+        return { data: { ...json, id: json.id } };
+    }
 
-        // Gestion pour les speakers : transformer externalLinks
-        if (resource === "speakers") {
-            const { twitter, linkedin, github, website, ...rest } = params.data;
-            const externalLinks: Record<string, string> = {};
-            if (twitter) externalLinks.twitter = twitter;
-            if (linkedin) externalLinks.linkedin = linkedin;
-            if (github) externalLinks.github = github;
-            if (website) externalLinks.website = website;
-            const dataToSend = { ...rest, externalLinks: Object.keys(externalLinks).length ? externalLinks : undefined };
-            const { json } = await httpClient(`${apiUrl}/${resource}`, {
-                method: "POST",
-                body: JSON.stringify(dataToSend),
-            });
-            return { data: json };
-        }
+    // Gestion pour les speakers : transformer externalLinks
+    if (resource === "speakers") {
+        const { twitter, linkedin, github, website, ...rest } = params.data;
+        const externalLinks: Record<string, string> = {};
+        if (twitter) externalLinks.twitter = twitter;
+        if (linkedin) externalLinks.linkedin = linkedin;
+        if (github) externalLinks.github = github;
+        if (website) externalLinks.website = website;
+        const dataToSend = { ...rest, externalLinks: Object.keys(externalLinks).length ? externalLinks : undefined };
+        const { json } = await httpClient(`${apiUrl}/speakers`, {
+            method: "POST",
+            body: JSON.stringify(dataToSend),
+        });
+        return { data: json };
+    }
 
-        return baseProvider.create(resource, params);
-    },
+    return baseProvider.create(resource, params);
+},
 
     update: async (resource, params) => {
         if (resource === "sessions") {

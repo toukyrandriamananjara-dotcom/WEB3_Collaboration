@@ -8,6 +8,14 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
     if (unauthorized) return unauthorized;
 
     const { id } = await params;
+    const sessions = await prisma.session.findMany({ where: { roomId: id }, take: 1 });
+    if (sessions.length > 0) {
+        return NextResponse.json(
+            { error: "Impossible de supprimer cette salle car elle est utilisée par des sessions" },
+            { status: 400 }
+        );
+    }
+
     await prisma.room.delete({ where: { id } });
     return NextResponse.json({ message: "Salle supprimée" });
 }
