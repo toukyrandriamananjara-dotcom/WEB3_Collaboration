@@ -1,9 +1,16 @@
-// src/components/ra/SessionCreate.tsx
 import { Create, SimpleForm, TextInput, DateTimeInput, ReferenceInput, SelectInput, NumberInput, ReferenceArrayInput, SelectArrayInput } from "react-admin";
+
+const validateSessionDates = (values: any) => {
+    const errors: any = {};
+    if (values.startTime && values.endTime && new Date(values.endTime) <= new Date(values.startTime)) {
+        errors.endTime = "L'heure de fin doit être après l'heure de début";
+    }
+    return errors;
+};
 
 export const SessionCreate = () => (
     <Create>
-        <SimpleForm>
+        <SimpleForm validate={validateSessionDates}>
             <ReferenceInput source="eventId" reference="events">
                 <SelectInput optionText="title" />
             </ReferenceInput>

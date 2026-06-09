@@ -19,8 +19,13 @@ export default function AdminLoginPage() {
         try {
             const result = await signIn("credentials", { email, password, redirect: false });
             if (result?.error) setError("Email ou mot de passe incorrect");
-            else { router.push("/admin/dashboard"); router.refresh(); }
-        } finally { setLoading(false); }
+            else {
+                router.push("/admin/ra");
+                router.refresh();
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (

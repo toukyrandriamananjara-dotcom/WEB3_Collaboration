@@ -1,4 +1,4 @@
-import { eventEmitter } from "@/lib/eventEmitter";
+/**import { eventEmitter } from "@/lib/eventEmitter";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -30,4 +30,4 @@ export async function GET(req: NextRequest) {
             Connection: "keep-alive",
         },
     });
-}
+}**/

@@ -26,6 +26,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
 
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+        if (end <= start) {
+        return NextResponse.json({ error: "L'heure de fin doit être après l'heure de début" }, { status: 400 });
+    }
+
     const session = await prisma.session.create({
         data: {
             title,

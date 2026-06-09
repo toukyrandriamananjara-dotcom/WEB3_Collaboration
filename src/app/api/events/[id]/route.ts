@@ -30,6 +30,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const body = await req.json();
     const { title, description, startDate, endDate, location } = body;
 
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (end <= start) {
+        return NextResponse.json({ error: "L'heure de fin doit être après l'heure de début" }, { status: 400 });
+    }
+
     const event = await prisma.event.update({
         where: { id },
         data: {

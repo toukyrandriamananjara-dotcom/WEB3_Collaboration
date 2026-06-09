@@ -1,4 +1,3 @@
-// src/components/AdminApp.tsx
 "use client";
 
 import { Admin, Resource } from "react-admin";
@@ -27,9 +26,10 @@ import { UserList } from "./ra/UserList";
 import {  UserEdit } from "./ra/UserEdit";
 import { UserCreate } from "./ra/UserCreate";
 
-import { QuestionList, QuestionEdit } from "./ra/QuestionList";
+import { QuestionList} from "./ra/QuestionList";
 import { Dashboard } from "./ra/Dashboard";
 import { MyLayout } from "./ra/MyLayout";
+import { QuestionEdit } from "./ra/QuestionEdit";
 
 export default function AdminApp() {
     return (
@@ -68,10 +68,9 @@ export default function AdminApp() {
                       edit={UserEdit}
                       create={UserCreate}
             />
-            <Resource name="admin/questions"
-                      list={QuestionList}
-                      edit={QuestionEdit}
-            />
+            <Resource name="questions"
+                    list={QuestionList}
+                    edit={QuestionEdit} />
         </Admin>
     );
 }

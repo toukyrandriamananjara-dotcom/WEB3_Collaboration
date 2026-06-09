@@ -33,6 +33,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
 
+    if (endDate <= startDate) {
+    return NextResponse.json({ error: "La date de fin doit être après la date de début" }, { status: 400 });
+}
+
     const event = await prisma.event.create({
         data: {
             title,
