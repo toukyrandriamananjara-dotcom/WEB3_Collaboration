@@ -31,6 +31,8 @@ import { Dashboard } from "./ra/Dashboard";
 import { MyLayout } from "./ra/MyLayout";
 import { QuestionEdit } from "./ra/QuestionEdit";
 
+import { appTheme } from "./theme";
+
 export default function AdminApp() {
     return (
         <Admin dashboard={Dashboard}
@@ -38,6 +40,7 @@ export default function AdminApp() {
                authProvider={authProvider}
                layout={MyLayout}
                 title="MyVent Admin"
+                theme={appTheme as any}
         >
             <Resource
                 name="events"

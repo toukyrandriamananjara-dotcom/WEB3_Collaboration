@@ -1,4 +1,3 @@
-// src/components/ra/EventList.tsx
 import { List, Datagrid, TextField, DateField, EditButton } from "react-admin";
 
 export const EventList = () => (
